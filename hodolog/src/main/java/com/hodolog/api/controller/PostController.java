@@ -45,7 +45,7 @@ public class PostController {
 //    }
 
     @PostMapping("/posts")
-    public String post(@ModelAttribute PostCreate params) { // ModelAttribute 생략가능
+    public String post(@RequestBody PostCreate params) { // ModelAttribute 생략가능
         log.info("params = {}", params);
         return "Hello World";
     }

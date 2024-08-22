@@ -29,10 +29,8 @@ class PostControllerTest {
         // 글 제목, 글 내용
         // expected
         mockMvc.perform(post("/posts")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE) // String으로 넘김
-                        .param("title", "글 제목입니다.")
-                        .param("content", "글 내용입니다. 하하")
+                        .contentType(MediaType.APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
+                        .content("{\"title\": \"제목입니다.\", \"content\": \"내용입니다.\"}")
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string("Hello World"))
