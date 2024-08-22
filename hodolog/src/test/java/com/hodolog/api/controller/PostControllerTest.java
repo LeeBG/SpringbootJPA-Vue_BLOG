@@ -24,7 +24,7 @@ class PostControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("/posts 요청시 Hello World를 출려한다.")
+    @DisplayName("/posts 요청시 Hello World를 출력한다.")
     void test() throws Exception {
         
         // 글 제목, 글 내용
@@ -54,8 +54,10 @@ class PostControllerTest {
                         .content("{\"title\": null, \"content\": \"내용입니다.\"}")
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("타이틀을 입력해주세요"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+                .andExpect(jsonPath("$.validation.field").value("타이틀을 입력해주세요."))
                 .andDo(print());
     }
 
