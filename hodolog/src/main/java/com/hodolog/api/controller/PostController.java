@@ -52,13 +52,18 @@ public class PostController {
     @PostMapping("/posts")
     public Map<String,String> post(@RequestBody @Valid PostCreate params, BindingResult result){ // ModelAttribute 생략가능
 
-        // 데이터를 검증하는 이유
-        // 1. Client 개발자가 깜빡할 수 있다. 실수로 값을 안 보낼 수 있다.
-        // 2. Client bug로 값이 누락될 수 있다.
-        // 3. 외부에 나쁜 사람이 값을 임의로 조작해서 보낼 수 있다.
-        // 4. DB에 값을 저장할 떄 의도치 않은 오류가 발생할 수 있다.
-        // 5. 서버 개발자의 편안함을 위해서
+        // 1. 메번 메서드마다 값을 검증 해야한다
+        //  > 개발자가 까먹을 수 있다.
+        //  > 검증 부분에서 버그가 발생할 수 있다.
+        //  > 지겹다.
+        // 2. 응답값에 HashMap -> 응답 클래스를 만들어 주는 것이 더 좋다.
+        // 3. 여러개의 에러처리가 힘들다.
+        // 4. 세 번 이상의 반복적인 작업은 피하는 것이 좋다.
+        // 5. 코드 && 개발에 관한 모든 것이 포함되어 있다.
+            // - 코드 && 개발에 관한 모든 것
 
+        
+        // BindingResult로 에러를 컨트롤러에서 직접 컨트롤해서 클라이언트에게 에러메시지를 전달하는 내용으로 진행
         if(result.hasErrors()){
             List<FieldError> fieldErrors = result.getFieldErrors();
             FieldError firstFieldError = fieldErrors.get(0);
