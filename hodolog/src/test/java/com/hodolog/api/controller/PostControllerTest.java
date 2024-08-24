@@ -1,7 +1,9 @@
 package com.hodolog.api.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hodolog.api.domain.Post;
 import com.hodolog.api.repository.PostRepository;
+import com.hodolog.api.request.PostCreate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +29,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class PostControllerTest {
+
+    @Autowired
+    private ObjectMapper objectMapper; // DI
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -43,12 +49,19 @@ class PostControllerTest {
     @Test // 실패에 대한 Test
     @DisplayName("/posts 요청시 Hello World를 출력한다.")
     void test() throws Exception {
-        //when
-        // 글 제목, 글 내용
-        // expected
+        // given
+        PostCreate request = PostCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        System.out.println(json);
+        // expect
         mockMvc.perform(post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
-                        .content("{\"title\": \"제목입니다.\", \"content\": \"내용입니다.\"}")
+                        .content(json)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string("{}"))
@@ -63,11 +76,17 @@ class PostControllerTest {
     @Test
     @DisplayName("/posts 요청시 title값은 필수다.")
     void test2() throws Exception {
+        // given
+        PostCreate request = PostCreate.builder()
+                .content("내용입니다.")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
         // 글 제목, 글 내용
         // expected
         mockMvc.perform(post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
-                        .content("{\"title\": null, \"content\": \"내용입니다.\"}")
+                        .content(json)
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
                 .andExpect(status().isBadRequest())
@@ -81,12 +100,20 @@ class PostControllerTest {
     @Test
     @DisplayName("/posts 요청시 title값은 필수다.")
     void test3() throws Exception {
+        // given
+        PostCreate request = PostCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
 
+        String json = objectMapper.writeValueAsString(request);
+
+        System.out.println(json);
         // 글 제목, 글 내용
         // expected
         mockMvc.perform(post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
-                        .content("{\"title\": \"제목입니다.\", \"content\": \"내용입니다.\"}")
+                        .content(json)
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
                 .andExpect(status().isOk())
@@ -100,6 +127,4 @@ class PostControllerTest {
         assertEquals("제목입니다.", post.getTitle());
         assertEquals("내용입니다.", post.getContent());
     }
-    // 테스트 클래스 전체를 돌리면 앞의 test1에서 성공case때문에 기대값 1이 만족이 아닌 2가 되면서 테스트 실패된다.
-    // 그렇기 때문에 test코드 돌리기 전에 모든 데이터들을 미리 삭제해보는 것도 좋은 방법이다.
 }

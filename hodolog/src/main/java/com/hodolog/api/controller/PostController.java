@@ -1,5 +1,6 @@
 package com.hodolog.api.controller;
 
+import com.hodolog.api.domain.Post;
 import com.hodolog.api.request.PostCreate;
 import com.hodolog.api.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * HTTP 요청 메소드
+ * GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD, TRACE, CONNECT 등 이 있다.
+ * 글 등록
+ * POST Method를 이용한다.
+ *
+ */
+
 // 컨트롤러 라우팅
 @RestController // 쉽게 데이터 응답이 가능하다. ResponseBody가 붙은  @Controller
 @Slf4j
@@ -26,36 +35,25 @@ public class PostController {
     // SPA(Single Page Application) -> vue, react, nuxt, next
     // vue -> javascript에서 화면을 만들어주고 서버와의 통신은 API(JSON형태로 응답처리)
 
-    //    @RequestMapping(method = RequestMethod.GET, path = "/vi/posts")
     @GetMapping("/test")
     public String test() {
         return "안녕";
     }
 
 
-    /*
-     * HTTP 요청 메소드
-     * GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD, TRACE, CONNECT 등 이 있다.
-     * 글 등록
-     * POST Method를 이용한다.
-     *
-     */
-    // 게시글 작성
-//    @PostMapping("/posts")
-//    public String post(@RequestParam String title, @RequestParam String content) {
-//        log.info("title = {}, content = {}", title, content);
-//        return "Hello World";
-//    }
-
-//    @PostMapping("/posts")
-//    public String post(@RequestParam Map<String, String> params) {
-//        log.info("params = {}",params);
-//        return "Hello World";
-//    }
-
     @PostMapping("/posts")
-    public Map<String,String> post(@RequestBody @Valid PostCreate request){ // ModelAttribute 생략가능
+    public void post(@RequestBody @Valid PostCreate request){ // ModelAttribute 생략가능
+        // Case1. 저장한 데이터 Entity -> Response로 응답하기
         postService.write(request);
-        return Map.of();
+        
+        // Case2. 저장한 데이터 primary_id -> response로 응답하기
+        // Client에서는 수신한 id를 post조회 API를 통해서 글 데이터를 수신받음
+//        Long postId = postService.write(request);
+//        return Map.of("postId", postId)
+        
+        // Case3. 응답 필요없음 -> Client에서 모든 Post(글) 데이터 context들을 잘 관리함
+        // Bad Case : 서버에서 -> 반드시 이렇게 할것입니다. fix
+        //      -> 서버에서 처라리 유연하게 대응하는 것이 좋습니다.
+        //      -> 한 번에 일괄적으로 잘 처리되는 case는 없다. -> 잘 관리하는 형태가 중요하다.
     }
 }
