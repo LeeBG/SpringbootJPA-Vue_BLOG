@@ -1,6 +1,8 @@
 package com.hodolog.api.controller;
 
 import com.hodolog.api.request.PostCreate;
+import com.hodolog.api.service.PostService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -15,7 +17,9 @@ import java.util.Map;
 // 컨트롤러 라우팅
 @RestController // 쉽게 데이터 응답이 가능하다. ResponseBody가 붙은  @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class PostController {
+    private final PostService postService;
     // SSR -> jsp, thymeleaf, mustache, freemarker
     // 서버에서 렌더링을 해가지고 렌더링
 
@@ -50,7 +54,8 @@ public class PostController {
 //    }
 
     @PostMapping("/posts")
-    public Map<String,String> post(@RequestBody @Valid PostCreate params){ // ModelAttribute 생략가능
+    public Map<String,String> post(@RequestBody @Valid PostCreate request){ // ModelAttribute 생략가능
+        postService.write(request);
         return Map.of();
     }
 }
