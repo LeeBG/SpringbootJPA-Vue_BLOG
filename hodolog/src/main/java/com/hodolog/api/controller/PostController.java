@@ -6,15 +6,10 @@ import com.hodolog.api.response.PostResponse;
 import com.hodolog.api.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /*
  * HTTP 요청 메소드
@@ -65,12 +60,17 @@ public class PostController {
      *  /posts/{postId} -> 글 한개만 조회
      */
 
+    // 단건 조회 API
     @GetMapping("/posts/{postId}")
     public PostResponse get(@PathVariable(name = "postId") Long id){
-        PostResponse postResponse = postService.get(id);
-        // Request(DTO) 클래스 - PostCreate
-        // Response 클래스
+        return postService.get(id);
+    }
 
-        return postResponse;
+    // 조회용 API
+    // 여러개의 글을 조회하는 API - 리스트 가져오기
+    // /posts
+    @GetMapping("/posts")
+    public List<PostResponse> getList() {
+        return postService.getList();
     }
 }
