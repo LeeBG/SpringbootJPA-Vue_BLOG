@@ -41,6 +41,7 @@ public class PostController {
     }
 
 
+    // 글 작성
     @PostMapping("/posts")
     public void post(@RequestBody @Valid PostCreate request){ // ModelAttribute 생략가능
         // Case1. 저장한 데이터 Entity -> Response로 응답하기
@@ -55,5 +56,17 @@ public class PostController {
         // Bad Case : 서버에서 -> 반드시 이렇게 할것입니다. fix
         //      -> 서버에서 처라리 유연하게 대응하는 것이 좋습니다.
         //      -> 한 번에 일괄적으로 잘 처리되는 case는 없다. -> 잘 관리하는 형태가 중요하다.
+    }
+
+    // 글 조회
+    /**
+     *  /posts -< 글 전체 조회(검색 + 페이징)
+     *  /posts/{postId} -> 글 한개만 조회
+     */
+
+    @GetMapping("/posts/{postId}")
+    public Post get(@PathVariable(name = "postId") Long id){
+        Post post = postService.get(id);
+        return post;
     }
 }
