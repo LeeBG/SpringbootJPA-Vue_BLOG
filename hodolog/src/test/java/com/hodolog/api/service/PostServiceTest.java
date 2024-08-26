@@ -3,6 +3,7 @@ package com.hodolog.api.service;
 import com.hodolog.api.domain.Post;
 import com.hodolog.api.repository.PostRepository;
 import com.hodolog.api.request.PostCreate;
+import com.hodolog.api.request.PostSearch;
 import com.hodolog.api.response.PostResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,7 +80,7 @@ class PostServiceTest {
     public void test3(){
         // given
         // 여러 더미 데이터 생성 및 저장
-        List<Post> requestPosts = IntStream.range(1,31)
+        List<Post> requestPosts = IntStream.range(0,20)
                 .mapToObj(i -> Post.builder()
                             .title("호돌맨 제목" + i)
                             .content("내용" + i)
@@ -88,13 +89,16 @@ class PostServiceTest {
         // sql - select, limit, offset
         postRepository.saveAll(requestPosts);
 
-        Pageable pageable = PageRequest.of(0,5, DESC,"id");
+        PostSearch postSearch = PostSearch.builder()
+                .page(1)
+                .size(10)
+                .build();
+
         // when
-        List<PostResponse> posts = postService.getList(pageable);
+        List<PostResponse> posts = postService.getList(postSearch);
 
         // then
-        assertEquals(5L, posts.size());
-        assertEquals("호돌맨 제목30",posts.get(0).getTitle());
-        assertEquals("호돌맨 제목26",posts.get(4).getTitle());
+        assertEquals(10L, posts.size());
+        assertEquals("호돌맨 제목19",posts.get(0).getTitle());
     }
 }
