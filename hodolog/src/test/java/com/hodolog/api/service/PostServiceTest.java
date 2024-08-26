@@ -1,6 +1,7 @@
 package com.hodolog.api.service;
 
 import com.hodolog.api.domain.Post;
+import com.hodolog.api.exception.PostNotFound;
 import com.hodolog.api.repository.PostRepository;
 import com.hodolog.api.request.PostCreate;
 import com.hodolog.api.request.PostEdit;
@@ -17,8 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PostServiceTest {
@@ -144,6 +144,69 @@ class PostServiceTest {
         postService.delete(post.getId());
 
         // then
-        Assertions.assertEquals(0,postRepository.count());
+        assertEquals(0,postRepository.count());
+    }
+
+
+    @Test
+    @DisplayName("글 1개 조회 - 존재하지 않는 글")
+    void test7() {
+        // given
+        Post post = Post.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+        postRepository.save(post);
+
+        // post.getId() // primary_id = 1
+
+        // expected
+        // 메시지에 대한 검증
+        
+        assertThrows(PostNotFound.class, ()->{
+            postService.get(post.getId() + 1L);
+        });
+        
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 - 존재하지 않는 글")
+    void test8() {
+        // given
+        Post post = Post.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+        // sql - select, limit, offset
+        Post savedPost = postRepository.save(post);
+
+        // expected
+        // 메시지에 대한 검증
+        assertThrows(PostNotFound.class, ()->{
+            postService.delete(post.getId() + 1L);
+        });
+    }
+
+    @Test
+    @DisplayName("글 제목 수정 - 존재하지 않는 글")
+    public void test9() {
+        // given
+        Post post = Post.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+        // sql - select, limit, offset
+        Post savedPost = postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("호돌걸")
+                .content("초가집")
+                .build();
+
+        // expected
+        // 메시지에 대한 검증
+        assertThrows(PostNotFound.class, ()->{
+            postService.edit(post.getId() + 1L, postEdit);
+        });
     }
 }
