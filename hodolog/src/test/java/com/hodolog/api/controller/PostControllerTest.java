@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -60,7 +62,7 @@ class PostControllerTest {
         System.out.println(json);
         // expect
         mockMvc.perform(post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
+                        .contentType(APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
                         .content(json)
                 )
                 .andExpect(status().isOk())
@@ -85,7 +87,7 @@ class PostControllerTest {
         // 글 제목, 글 내용
         // expected
         mockMvc.perform(post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
+                        .contentType(APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
                         .content(json)
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
@@ -112,7 +114,7 @@ class PostControllerTest {
         // 글 제목, 글 내용
         // expected
         mockMvc.perform(post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
+                        .contentType(APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
                         .content(json)
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
@@ -142,7 +144,7 @@ class PostControllerTest {
         // expected(when, then)
         // 조회 API로 확인
         mockMvc.perform(get("/posts/{postId}",post.getId())
-                        .contentType(MediaType.APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
+                        .contentType(APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
                 .andExpect(status().isOk())
@@ -176,7 +178,7 @@ class PostControllerTest {
         // expected(when, then)
         // 조회 API로 확인
         mockMvc.perform(get("/posts?page=0&size=10")
-                        .contentType(MediaType.APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
+                        .contentType(APPLICATION_JSON)        // 사실 기본값이 아니였음 안쓰면 415에러conteny type지원에러
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
                 .andExpect(status().isOk())
@@ -205,8 +207,25 @@ class PostControllerTest {
         // expected(when, then)
         // 조회 API로 확인
         mockMvc.perform(patch("/posts/{postId}", post.getId()) // PATCH /post/{postId}
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 컨트롤러")
+    public void test8() throws Exception{
+        // given
+        Post post = Post.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+        // sql - select, limit, offset
+        postRepository.save(post);
+
+        mockMvc.perform(delete("/posts/{postId}", post.getId()) // PATCH /post/{postId}
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

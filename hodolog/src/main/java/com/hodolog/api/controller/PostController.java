@@ -30,12 +30,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
-    // SSR -> jsp, thymeleaf, mustache, freemarker
-    // 서버에서 렌더링을 해가지고 렌더링
-
-    // SPA(Single Page Application) -> vue, react, nuxt, next
-    // vue -> javascript에서 화면을 만들어주고 서버와의 통신은 API(JSON형태로 응답처리)
-
     @GetMapping("/test")
     public String test() {
         return "안녕";
@@ -47,24 +41,9 @@ public class PostController {
     public void post(@RequestBody @Valid PostCreate request){ // ModelAttribute 생략가능
         // Case1. 저장한 데이터 Entity -> Response로 응답하기
         postService.write(request);
-        
-        // Case2. 저장한 데이터 primary_id -> response로 응답하기
-        // Client에서는 수신한 id를 post조회 API를 통해서 글 데이터를 수신받음
-//        Long postId = postService.write(request);
-//        return Map.of("postId", postId)
-        
-        // Case3. 응답 필요없음 -> Client에서 모든 Post(글) 데이터 context들을 잘 관리함
-        // Bad Case : 서버에서 -> 반드시 이렇게 할것입니다. fix
-        //      -> 서버에서 처라리 유연하게 대응하는 것이 좋습니다.
-        //      -> 한 번에 일괄적으로 잘 처리되는 case는 없다. -> 잘 관리하는 형태가 중요하다.
     }
 
     // 글 조회
-    /**
-     *  /posts -< 글 전체 조회(검색 + 페이징)
-     *  /posts/{postId} -> 글 한개만 조회
-     */
-
     // 단건 조회 API
     @GetMapping("/posts/{postId}")
     public PostResponse get(@PathVariable(name = "postId") Long id){
@@ -73,7 +52,6 @@ public class PostController {
 
     // 조회용 API
     // 여러개의 글을 조회하는 API - 리스트 가져오기
-    // /posts
     @GetMapping("/posts")
     public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
         return postService.getList(postSearch);
@@ -82,5 +60,10 @@ public class PostController {
     @PatchMapping("/posts/{postId}")
     public void edit(@PathVariable Long postId, @RequestBody @Valid PostEdit request) {
         postService.edit(postId,request);
+    }
+
+    @DeleteMapping("/posts/{postId}")
+    public void delete(@PathVariable Long postId){
+        postService.delete(postId);
     }
 }

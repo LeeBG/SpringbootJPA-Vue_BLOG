@@ -6,6 +6,7 @@ import com.hodolog.api.request.PostCreate;
 import com.hodolog.api.request.PostEdit;
 import com.hodolog.api.request.PostSearch;
 import com.hodolog.api.response.PostResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -124,5 +125,25 @@ class PostServiceTest {
         Post changedPost = postRepository.findById(post.getId()).orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id="+post.getId()));
         assertEquals("호돌걸",changedPost.getTitle());
         assertEquals("초가집",changedPost.getContent());
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    public void test5() {
+        // given
+        Post post = Post.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+        // sql - select, limit, offset
+        Post savedPost = postRepository.save(post);
+
+        System.out.println("저장된 원래 게시글 : "  + savedPost);
+
+        // when
+        postService.delete(post.getId());
+
+        // then
+        Assertions.assertEquals(0,postRepository.count());
     }
 }
