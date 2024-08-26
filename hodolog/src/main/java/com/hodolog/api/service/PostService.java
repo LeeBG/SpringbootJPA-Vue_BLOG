@@ -61,17 +61,13 @@ public class PostService {
     @Transactional
     public void edit(Long id, PostEdit postEdit){
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
-//
-//        post.setTitle(postEdit.getTitle());
-//        post.setContent(postEdit.getContent());
 
         PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
 
+        // 필드가 늘어나면 처리가 힘들어지기 때문에 PostEditor을 사용했다.
         PostEditor postEditor = editorBuilder.title(postEdit.getTitle())
                 .content(postEdit.getContent())
                 .build();
-
-
 
         post.edit(postEditor);
     }
