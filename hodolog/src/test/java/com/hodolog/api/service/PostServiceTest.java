@@ -3,6 +3,7 @@ package com.hodolog.api.service;
 import com.hodolog.api.domain.Post;
 import com.hodolog.api.repository.PostRepository;
 import com.hodolog.api.request.PostCreate;
+import com.hodolog.api.request.PostEdit;
 import com.hodolog.api.request.PostSearch;
 import com.hodolog.api.response.PostResponse;
 import org.junit.jupiter.api.Assertions;
@@ -33,7 +34,7 @@ class PostServiceTest {
     private PostRepository postRepository;
 
     @BeforeEach
-    public void clean(){
+    public void clean() {
         postRepository.deleteAll();
     }
 
@@ -49,7 +50,7 @@ class PostServiceTest {
         // when
         postService.write(postCreate);
         // then
-        Assertions.assertEquals(1L,postRepository.count());
+        assertEquals(1L, postRepository.count());
         Post post = postRepository.findAll().get(0);
         assertEquals("제목입니다.", post.getTitle());
         assertEquals("내용입니다.", post.getContent());
@@ -57,7 +58,7 @@ class PostServiceTest {
 
     @Test
     @DisplayName("글 1개 조회")
-    void test2(){
+    void test2() {
         // given
         Post requestPost = Post.builder()
                 .title("foo")
@@ -77,14 +78,14 @@ class PostServiceTest {
 
     @Test
     @DisplayName("글 1페이지 조회")
-    public void test3(){
+    public void test3() {
         // given
         // 여러 더미 데이터 생성 및 저장
-        List<Post> requestPosts = IntStream.range(0,20)
+        List<Post> requestPosts = IntStream.range(0, 20)
                 .mapToObj(i -> Post.builder()
-                            .title("호돌맨 제목" + i)
-                            .content("내용" + i)
-                            .build()
+                        .title("호돌맨 제목" + i)
+                        .content("내용" + i)
+                        .build()
                 ).collect(Collectors.toList());
         // sql - select, limit, offset
         postRepository.saveAll(requestPosts);
@@ -99,6 +100,34 @@ class PostServiceTest {
 
         // then
         assertEquals(10L, posts.size());
-        assertEquals("호돌맨 제목19",posts.get(0).getTitle());
+        assertEquals("호돌맨 제목19", posts.get(0).getTitle());
+    }
+
+
+    @Test
+    @DisplayName("글 제목 수정")
+    public void test4() {
+        // given
+        Post post = Post.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+        // sql - select, limit, offset
+        Post savedPost = postRepository.save(post);
+
+        System.out.println("저장된 원래 게시글 : "  + savedPost);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("호돌걸")
+                .content("초가집")
+                .build();
+
+        // when
+        postService.edit(post.getId(),postEdit);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId()).orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id="+post.getId()));
+        assertEquals("호돌걸",changedPost.getTitle());
+        assertEquals("초가집",changedPost.getContent());
     }
 }
