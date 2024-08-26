@@ -1,5 +1,6 @@
 package com.hodolog.api.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,6 +18,7 @@ import java.util.Map;
  */
 
 @Getter
+@JsonInclude(value = JsonInclude.Include.NON_EMPTY) // 비어있지 않은 내용만 포함
 public class ErrorResponse {
     // 회사마다 팀마다 규칙이 조금씩 다르다.
     private final String code;

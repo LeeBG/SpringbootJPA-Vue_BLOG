@@ -1,6 +1,5 @@
 package com.hodolog.api.controller;
 
-import com.hodolog.api.domain.Post;
 import com.hodolog.api.request.PostCreate;
 import com.hodolog.api.request.PostEdit;
 import com.hodolog.api.request.PostSearch;
@@ -8,9 +7,6 @@ import com.hodolog.api.response.PostResponse;
 import com.hodolog.api.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -40,6 +36,8 @@ public class PostController {
     @PostMapping("/posts")
     public void post(@RequestBody @Valid PostCreate request){ // ModelAttribute 생략가능
         // Case1. 저장한 데이터 Entity -> Response로 응답하기
+        request.validate();
+
         postService.write(request);
     }
 
