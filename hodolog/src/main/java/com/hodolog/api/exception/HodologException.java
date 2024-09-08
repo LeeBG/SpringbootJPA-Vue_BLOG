@@ -1,7 +1,16 @@
 package com.hodolog.api.exception;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+@Getter
 public abstract class HodologException extends RuntimeException{
+
+    private final Map<String, String> validation = new HashMap<>();
     public HodologException(String message) {
         super(message);
     }
@@ -11,4 +20,8 @@ public abstract class HodologException extends RuntimeException{
     }
 
     public abstract int getStatusCode();
+
+    public void addValidation(String fieldName, String message){
+        validation.put(fieldName,message);
+    }
 }

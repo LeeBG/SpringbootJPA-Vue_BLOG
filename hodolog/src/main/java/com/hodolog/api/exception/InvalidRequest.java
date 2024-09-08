@@ -10,9 +10,6 @@ import lombok.Getter;
 public class InvalidRequest extends HodologException  {
     private static final String MESSAGE = "잘못된 요청입니다.";
 
-    private  String fieldName;
-    private  String message;
-
     public InvalidRequest() {
         super(MESSAGE);
     }
@@ -27,7 +24,6 @@ public class InvalidRequest extends HodologException  {
 
     public InvalidRequest(String fieldName, String message) {
         super(MESSAGE);
-        this.fieldName = fieldName;
-        this.message = message;
+        addValidation(fieldName,message);
     }
 }
