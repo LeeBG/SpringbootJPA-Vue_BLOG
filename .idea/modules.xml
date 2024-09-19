@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/hodolog.iml" filepath="$PROJECT_DIR$/.idea/hodolog.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/hodolog.hodolog.main.iml" filepath="$PROJECT_DIR$/.idea/modules/hodolog.hodolog.main.iml" />
     </modules>
   </component>
 </project>
