@@ -17,7 +17,11 @@ const title = ref('')
 const content = ref('')
 
 const write = function () {
+<<<<<<< HEAD
   axios.post('/api/posts', {
+=======
+  axios.post("/api/posts", {
+>>>>>>> bb3fa1de0dee7ebb7bf83dbf6893b60fcf1100a8
     title: title.value,
     content: content.value
   })
